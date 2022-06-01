@@ -9,7 +9,7 @@
 
 ```sql
 CREATE TABLE `users` (
-  `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'ユーザーID',
   `username` varchar(50) NOT NULL COMMENT 'ユーザー名',
   `password` varchar(50) NOT NULL COMMENT 'パスワード',
   `email` varchar(355) NOT NULL COMMENT 'メール',
@@ -27,7 +27,7 @@ CREATE TABLE `users` (
 
 | Name | Type | Default | Nullable | Extra Definition | Children | Parents | Comment | Labels |
 | ---- | ---- | ------- | -------- | ---------------- | -------- | ------- | ------- | ------ |
-| id | int |  | false | auto_increment | [comment_stars](comment_stars.md) [comments](comments.md) [posts](posts.md) [user_options](user_options.md) [logs](logs.md) |  | ID |  |
+| id | int |  | false | auto_increment | [comment_stars](comment_stars.md) [comments](comments.md) [posts](posts.md) [user_options](user_options.md) [logs](logs.md) |  | ユーザーID |  |
 | username | varchar(50) |  | false |  |  |  | ユーザー名 |  |
 | password | varchar(50) |  | false |  |  |  | パスワード | `secure` `encrypted` |
 | email | varchar(355) |  | false |  |  |  | メール | `secure` |
