@@ -28,11 +28,12 @@ func Viewer() {
 	listView.SetTitle("Result")
 	listView.SetBorder(true)
 	dropdown := tview.NewDropDown().
-		SetLabel("data sorce: ").
+		SetLabel("data source: ").
 		SetOptions(source, func(text string, index int) {
 			tables = getTableInfo(config.Token, config.Source[index].Owner, config.Source[index].Repo, config.Source[index].Path)
 			listView.Clear()
 			filterList(listView, tables, inputField.GetText(), textView)
+			app.SetFocus(inputField)
 		})
 	dropdown.SetBorder(true)
 
