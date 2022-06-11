@@ -75,6 +75,18 @@ func Viewer() {
 		return event
 	})
 
+	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyCtrlD:
+			app.SetFocus(dropdown)
+		case tcell.KeyCtrlS:
+			app.SetFocus(inputField)
+		case tcell.KeyCtrlR:
+			app.SetFocus(listView)
+		}
+		return event
+	})
+
 	if err := app.SetRoot(grid, true).SetFocus(dropdown).Run(); err != nil {
 		panic(err)
 	}
