@@ -23,7 +23,7 @@ func Viewer() {
 	source := config.getSourceList()
 
 	app := tview.NewApplication()
-
+	app.EnableMouse(true)
 	inputField := CreateSerachField()
 	textView := tview.NewTextView()
 	textView.SetText("")
