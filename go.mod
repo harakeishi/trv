@@ -1,4 +1,4 @@
-module github.com/harakeishi/butler
+module github.com/harakeishi/trv
 
 go 1.18
 

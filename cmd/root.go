@@ -3,16 +3,16 @@ package cmd
 import (
 	"os"
 
-	butler "github.com/harakeishi/butler/butler"
+	trv "github.com/harakeishi/trv/trv"
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "butler",
-	Short: "butler",
-	Long:  `butler`,
+	Use:   "trv",
+	Short: "trv",
+	Long:  `trv`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		butler.Viewer()
+		trv.Viewer()
 		return nil
 	},
 }

@@ -30,6 +30,7 @@ func getTableInfo(token, owner, repo, dir string) []table {
 			}
 			table := table{name: strings.Replace(content.GetName(), ".md", "", -1)}
 			text, _ := content.GetContent()
+			table.description = GetDescriptionFromMarkdown(text)
 			table.columns = MarkdownParseTocolumn(text)
 			tables = append(tables, table)
 		}
@@ -37,6 +38,11 @@ func getTableInfo(token, owner, repo, dir string) []table {
 	return tables
 }
 
+func GetDescriptionFromMarkdown(text string) string {
+	tmp := strings.Split(text, "#")
+	d := strings.Split(tmp[3], "\n")
+	return d[2]
+}
 func MarkdownParseTocolumn(text string) []column {
 	var result []column
 	tmp := strings.Split(text, "#")

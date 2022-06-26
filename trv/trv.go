@@ -10,6 +10,13 @@ import (
 
 var tables []table
 
+func CreateSerachField() *tview.InputField {
+	inputField := tview.NewInputField()
+	inputField.SetLabel("serach:")
+	inputField.SetBorder(true)
+	return inputField
+}
+
 func Viewer() {
 	config := loadConfig()
 
@@ -17,32 +24,43 @@ func Viewer() {
 
 	app := tview.NewApplication()
 
-	inputField := tview.NewInputField()
-	inputField.SetLabel("serach: ")
-	inputField.SetBorder(true)
+	inputField := CreateSerachField()
 	textView := tview.NewTextView()
-	textView.SetTitle("details")
-	textView.SetBorder(true)
 	textView.SetText("")
 	listView := tview.NewList()
 	listView.SetTitle("Result")
 	listView.SetBorder(true)
+	table := tview.NewTable().
+		SetBorders(true)
+	table.SetCell(0, 0, tview.NewTableCell("column").SetTextColor(tcell.ColorYellow).SetAlign(tview.AlignCenter))
+	table.SetCell(0, 1, tview.NewTableCell("type").SetTextColor(tcell.ColorYellow).SetAlign(tview.AlignCenter))
+	table.SetCell(0, 2, tview.NewTableCell("comment").SetTextColor(tcell.ColorYellow).SetAlign(tview.AlignCenter))
+	table.SetCell(1, 0, tview.NewTableCell(""))
+	table.SetCell(1, 1, tview.NewTableCell(""))
+	table.SetCell(1, 2, tview.NewTableCell(""))
+
 	dropdown := tview.NewDropDown().
 		SetLabel("data source: ").
 		SetOptions(source, func(text string, index int) {
 			tables = getTableInfo(config.Token, config.Source[index].Owner, config.Source[index].Repo, config.Source[index].Path)
 			listView.Clear()
-			filterList(listView, tables, inputField.GetText(), textView)
+			filterList(listView, tables, inputField.GetText(), textView, table)
 			app.SetFocus(inputField)
 		})
 	dropdown.SetBorder(true)
 
+	detailsBox := tview.NewGrid()
+	detailsBox.SetTitle("details").SetBorder(true)
+	detailsBox.SetSize(5, 5, 0, 0).
+		AddItem(textView, 0, 0, 2, 5, 0, 0, true).
+		AddItem(table, 2, 0, 3, 5, 2, 5, true)
+	detailsBox.SetOffset(1, 1)
 	grid := tview.NewGrid()
 	grid.SetSize(10, 10, 0, 0).
 		AddItem(dropdown, 0, 0, 1, 3, 0, 0, true).
 		AddItem(inputField, 0, 3, 1, 7, 0, 0, true).
-		AddItem(listView, 1, 0, 9, 6, 0, 0, true).
-		AddItem(textView, 1, 6, 9, 4, 0, 0, true)
+		AddItem(listView, 1, 0, 6, 10, 0, 0, true).
+		AddItem(detailsBox, 7, 0, 3, 10, 0, 0, true)
 
 	dropdown.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
@@ -63,7 +81,7 @@ func Viewer() {
 		return event
 	})
 	inputField.SetChangedFunc(func(text string) {
-		listView = filterList(listView, tables, inputField.GetText(), textView)
+		listView = filterList(listView, tables, inputField.GetText(), textView, table)
 	})
 
 	listView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
@@ -92,7 +110,7 @@ func Viewer() {
 	}
 }
 
-func filterList(list *tview.List, items []table, target string, textView *tview.TextView) *tview.List {
+func filterList(list *tview.List, items []table, target string, textView *tview.TextView, table *tview.Table) *tview.List {
 	list.Clear()
 	for _, r := range items {
 		for i, c := range r.columns {
@@ -102,7 +120,11 @@ func filterList(list *tview.List, items []table, target string, textView *tview.
 					for _, v := range items {
 						for a, b := range v.columns {
 							if v.getFullName(a) == s1 {
-								textView.SetText(fmt.Sprintf("table name: %s\ndetails: %s\n\ncolumn: %s\ntype: %s\ncomment: %s\n", v.name, v.description, b.name, b.Type, b.comment))
+								textView.SetText(fmt.Sprintf("table name: %s\ndetails: %s", v.name, v.description))
+								table.RemoveRow(1)
+								table.SetCell(1, 0, tview.NewTableCell(b.name))
+								table.SetCell(1, 1, tview.NewTableCell(b.Type))
+								table.SetCell(1, 2, tview.NewTableCell(b.comment))
 							}
 						}
 					}
