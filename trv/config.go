@@ -1,19 +1,26 @@
 package butler
 
 import (
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"log"
+
+	"github.com/google/go-github/github"
+	"golang.org/x/oauth2"
 )
 
 type Config struct {
-	Token  string   `json:"token"`
 	Source []Source `json:"source"`
 }
 type Source struct {
-	Owner string `json:"owner"`
-	Repo  string `json:"repo"`
-	Path  string `json:"path"`
+	Owner        string `json:"owner"`
+	Repo         string `json:"repo"`
+	Path         string `json:"path"`
+	IsEnterprise bool   `json:"isEnterprise"`
+	Token        string `json:"token"`
+	BaseURL      string `json:"baseURL"`
+	UploadURL    string `json:"uploadURL"`
 }
 
 func loadConfig() Config {
@@ -34,4 +41,20 @@ func (c Config) getSourceList() []string {
 		sourceList = append(sourceList, v.Repo)
 	}
 	return sourceList
+}
+
+func (s Source) NewClient() (*github.Client, context.Context) {
+	var client *github.Client
+	var ts oauth2.TokenSource
+	ts = oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: s.Token},
+	)
+	ctx := context.Background()
+	tc := oauth2.NewClient(ctx, ts)
+	if s.IsEnterprise {
+		client, _ = github.NewEnterpriseClient(s.BaseURL, s.UploadURL, tc)
+	} else {
+		client = github.NewClient(tc)
+	}
+	return client, ctx
 }

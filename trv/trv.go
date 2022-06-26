@@ -42,7 +42,7 @@ func Viewer() {
 	dropdown := tview.NewDropDown().
 		SetLabel("data source: ").
 		SetOptions(source, func(text string, index int) {
-			tables = getTableInfo(config.Token, config.Source[index].Owner, config.Source[index].Repo, config.Source[index].Path)
+			tables = getTableInfo(config.Source[index])
 			listView.Clear()
 			filterList(listView, tables, inputField.GetText(), textView, table)
 			app.SetFocus(inputField)

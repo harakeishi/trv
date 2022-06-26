@@ -1,30 +1,21 @@
 package butler
 
 import (
-	"context"
 	"strings"
-
-	"github.com/google/go-github/github"
-	"golang.org/x/oauth2"
 )
 
-func getTableInfo(token, owner, repo, dir string) []table {
+func getTableInfo(source Source) []table {
 	var tables []table
 
-	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: token},
-	)
-	tc := oauth2.NewClient(ctx, ts)
 	// エンタープライズには対応してないのでhttps://pkg.go.dev/github.com/google/go-github@v17.0.0+incompatible/github#NewEnterpriseClient　をよしなに使うことを考える
-	client := github.NewClient(tc)
+	client, ctx := source.NewClient()
 
-	_, contents, _, _ := client.Repositories.GetContents(ctx, owner, repo, dir, nil)
+	_, contents, _, _ := client.Repositories.GetContents(ctx, source.Owner, source.Repo, source.Path, nil)
 
 	for _, v := range contents {
 		path := v.GetPath()
 		if strings.Contains(path, ".md") {
-			content, _, _, _ := client.Repositories.GetContents(ctx, owner, repo, path, nil)
+			content, _, _, _ := client.Repositories.GetContents(ctx, source.Owner, source.Repo, path, nil)
 			if strings.Replace(content.GetName(), ".md", "", -1) == "README" {
 				continue
 			}
