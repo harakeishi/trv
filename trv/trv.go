@@ -114,7 +114,7 @@ func filterList(list *tview.List, items []table, target string, textView *tview.
 	list.Clear()
 	for _, r := range items {
 		for i, c := range r.columns {
-			if strings.Contains(r.getFullName(i), target) || target == "" {
+			if strings.Contains(strings.ToLower(r.getFullName(i)), strings.ToLower(target)) || target == "" {
 				list.AddItem(r.getFullName(i), c.comment, 1, func() {})
 				list.SetSelectedFunc(func(i int, s1, s2 string, r rune) {
 					for _, v := range items {
