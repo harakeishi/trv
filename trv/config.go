@@ -3,6 +3,7 @@ package butler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 
@@ -38,7 +39,7 @@ func loadConfig() Config {
 func (c Config) getSourceList() []string {
 	var sourceList []string
 	for _, v := range c.Source {
-		sourceList = append(sourceList, v.Repo)
+		sourceList = append(sourceList, fmt.Sprintf("%s/%s", v.Repo, v.Path))
 	}
 	return sourceList
 }
