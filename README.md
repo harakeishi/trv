@@ -1,2 +1,2 @@
 # trv
-`trv` is a remode viewer for tbls.
+`trv` is a remote viewer for tbls.
