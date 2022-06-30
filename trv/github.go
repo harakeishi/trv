@@ -7,7 +7,6 @@ import (
 func getTableInfo(source Source) []table {
 	var tables []table
 
-	// エンタープライズには対応してないのでhttps://pkg.go.dev/github.com/google/go-github@v17.0.0+incompatible/github#NewEnterpriseClient　をよしなに使うことを考える
 	client, ctx := source.NewClient()
 
 	_, contents, _, _ := client.Repositories.GetContents(ctx, source.Owner, source.Repo, source.Path, nil)
