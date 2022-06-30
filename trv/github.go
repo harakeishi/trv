@@ -4,13 +4,14 @@ import (
 	"strings"
 )
 
-func getTableInfo(source Source) []table {
-	var tables []table
-
+func getTableInfo(source Source) []Table {
+	var db db
+	db.loadData(source.Repo, source.Path)
 	client, ctx := source.NewClient()
-
+	if len(db.tables) != 0 {
+		return db.tables
+	}
 	_, contents, _, _ := client.Repositories.GetContents(ctx, source.Owner, source.Repo, source.Path, nil)
-
 	for _, v := range contents {
 		path := v.GetPath()
 		if strings.Contains(path, ".md") {
@@ -18,14 +19,15 @@ func getTableInfo(source Source) []table {
 			if strings.Replace(content.GetName(), ".md", "", -1) == "README" {
 				continue
 			}
-			table := table{name: strings.Replace(content.GetName(), ".md", "", -1)}
+			table := Table{Name: strings.Replace(content.GetName(), ".md", "", -1)}
 			text, _ := content.GetContent()
-			table.description = GetDescriptionFromMarkdown(text)
-			table.columns = MarkdownParseTocolumn(text)
-			tables = append(tables, table)
+			table.Description = GetDescriptionFromMarkdown(text)
+			table.Columns = MarkdownParseTocolumn(text)
+			db.tables = append(db.tables, table)
 		}
 	}
-	return tables
+	db.saveData(source.Repo, source.Path)
+	return db.tables
 }
 
 func GetDescriptionFromMarkdown(text string) string {
@@ -33,8 +35,8 @@ func GetDescriptionFromMarkdown(text string) string {
 	d := strings.Split(tmp[3], "\n")
 	return d[2]
 }
-func MarkdownParseTocolumn(text string) []column {
-	var result []column
+func MarkdownParseTocolumn(text string) []Column {
+	var result []Column
 	tmp := strings.Split(text, "#")
 	rows := strings.Split(tmp[5], "\n")
 	for i, v := range rows {
@@ -46,10 +48,10 @@ func MarkdownParseTocolumn(text string) []column {
 		if len(colum) < 8 {
 			continue
 		}
-		result = append(result, column{
-			name:    strings.TrimSpace(colum[1]),
+		result = append(result, Column{
+			Name:    strings.TrimSpace(colum[1]),
 			Type:    strings.TrimSpace(colum[2]),
-			comment: strings.TrimSpace(colum[8]),
+			Comment: strings.TrimSpace(colum[8]),
 		})
 	}
 	return result

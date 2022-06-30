@@ -8,7 +8,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-var tables []table
+var tables []Table
 
 func CreateSerachField() *tview.InputField {
 	inputField := tview.NewInputField()
@@ -18,6 +18,7 @@ func CreateSerachField() *tview.InputField {
 }
 
 func Viewer() {
+
 	config := loadConfig()
 
 	source := config.getSourceList()
@@ -110,21 +111,21 @@ func Viewer() {
 	}
 }
 
-func filterList(list *tview.List, items []table, target string, textView *tview.TextView, table *tview.Table) *tview.List {
+func filterList(list *tview.List, items []Table, target string, textView *tview.TextView, table *tview.Table) *tview.List {
 	list.Clear()
 	for _, r := range items {
-		for i, c := range r.columns {
+		for i, c := range r.Columns {
 			if strings.Contains(strings.ToLower(r.getFullName(i)), strings.ToLower(target)) || target == "" {
-				list.AddItem(r.getFullName(i), c.comment, 1, func() {})
+				list.AddItem(r.getFullName(i), c.Comment, 1, func() {})
 				list.SetSelectedFunc(func(i int, s1, s2 string, r rune) {
 					for _, v := range items {
-						for a, b := range v.columns {
+						for a, b := range v.Columns {
 							if v.getFullName(a) == s1 {
-								textView.SetText(fmt.Sprintf("table name: %s\ndetails: %s", v.name, v.description))
+								textView.SetText(fmt.Sprintf("table name: %s\ndetails: %s", v.Name, v.Description))
 								table.RemoveRow(1)
-								table.SetCell(1, 0, tview.NewTableCell(b.name))
+								table.SetCell(1, 0, tview.NewTableCell(b.Name))
 								table.SetCell(1, 1, tview.NewTableCell(b.Type))
-								table.SetCell(1, 2, tview.NewTableCell(b.comment))
+								table.SetCell(1, 2, tview.NewTableCell(b.Comment))
 							}
 						}
 					}
