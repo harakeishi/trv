@@ -1,33 +1,36 @@
 package trv
 
 import (
+	"context"
 	"strings"
+
+	"github.com/google/go-github/github"
 )
 
-func getTableInfo(source Source) []Table {
-	var db db
-	db.loadData(source.Repo, source.Path)
-	client, ctx := source.NewClient()
-	if len(db.tables) != 0 {
-		return db.tables
-	}
+func fetchDbInfo(client *github.Client, ctx context.Context, source Source) []Table {
+	var tables []Table
 	_, contents, _, _ := client.Repositories.GetContents(ctx, source.Owner, source.Repo, source.Path, nil)
 	for _, v := range contents {
 		path := v.GetPath()
 		if strings.Contains(path, ".md") {
-			content, _, _, _ := client.Repositories.GetContents(ctx, source.Owner, source.Repo, path, nil)
-			if strings.Replace(content.GetName(), ".md", "", -1) == "README" {
+			if strings.Replace(path, ".md", "", -1) == "README" {
 				continue
 			}
-			table := Table{Name: strings.Replace(content.GetName(), ".md", "", -1)}
-			text, _ := content.GetContent()
-			table.Description = GetDescriptionFromMarkdown(text)
-			table.Columns = MarkdownParseTocolumn(text)
-			db.tables = append(db.tables, table)
+			table := fetchTableInfo(client, ctx, source.Owner, source.Repo, path)
+			tables = append(tables, table)
 		}
 	}
-	db.saveData(source.Repo, source.Path)
-	return db.tables
+	return tables
+}
+
+func fetchTableInfo(client *github.Client, ctx context.Context, owner, repo, path string) Table {
+	var table Table
+	content, _, _, _ := client.Repositories.GetContents(ctx, owner, repo, path, nil)
+	table = Table{Name: strings.Replace(content.GetName(), ".md", "", -1)}
+	text, _ := content.GetContent()
+	table.Description = GetDescriptionFromMarkdown(text)
+	table.Columns = MarkdownParseTocolumn(text)
+	return table
 }
 
 func GetDescriptionFromMarkdown(text string) string {

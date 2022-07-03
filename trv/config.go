@@ -14,15 +14,6 @@ import (
 type Config struct {
 	Source []Source `json:"source"`
 }
-type Source struct {
-	Owner        string `json:"owner"`
-	Repo         string `json:"repo"`
-	Path         string `json:"path"`
-	IsEnterprise bool   `json:"isEnterprise"`
-	Token        string `json:"token"`
-	BaseURL      string `json:"baseURL"`
-	UploadURL    string `json:"uploadURL"`
-}
 
 func loadConfig() Config {
 	bytes, err := ioutil.ReadFile("config.json")

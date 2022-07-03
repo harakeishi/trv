@@ -8,8 +8,6 @@ import (
 	"github.com/rivo/tview"
 )
 
-var tables []Table
-
 func CreateSerachField() *tview.InputField {
 	inputField := tview.NewInputField()
 	inputField.SetLabel("serach:")
@@ -18,7 +16,7 @@ func CreateSerachField() *tview.InputField {
 }
 
 func Viewer() {
-
+	var tables []Table
 	config := loadConfig()
 
 	source := config.getSourceList()
@@ -43,7 +41,8 @@ func Viewer() {
 	dropdown := tview.NewDropDown().
 		SetLabel("data source: ").
 		SetOptions(source, func(text string, index int) {
-			tables = getTableInfo(config.Source[index])
+			db := config.Source[index].setDbData()
+			tables = db.tables
 			listView.Clear()
 			filterList(listView, tables, inputField.GetText(), textView, table)
 			app.SetFocus(inputField)
