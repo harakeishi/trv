@@ -12,7 +12,9 @@ var rootCmd = &cobra.Command{
 	Short: "trv",
 	Long:  `trv`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		trv.Viewer()
+		var trv trv.Trv
+		trv.Init()
+		trv.Draw()
 		return nil
 	},
 }
