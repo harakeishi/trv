@@ -15,11 +15,15 @@ func CreateSerachField() *tview.InputField {
 	return inputField
 }
 
+const addSource = "add source"
+
 func Viewer() {
 	var tables []Table
+	pages := tview.NewPages()
 	config := loadConfig()
 
 	source := config.getSourceList()
+	source = append(source, addSource)
 
 	app := tview.NewApplication()
 	app.EnableMouse(true)
@@ -41,6 +45,11 @@ func Viewer() {
 	dropdown := tview.NewDropDown().
 		SetLabel("data source: ").
 		SetOptions(source, func(text string, index int) {
+			if text == addSource {
+				fmt.Println("OK")
+				pages.ShowPage("modal")
+				return
+			}
 			db := config.Source[index].setDbData()
 			tables = db.tables
 			listView.Clear()
@@ -57,10 +66,10 @@ func Viewer() {
 	detailsBox.SetOffset(1, 1)
 	grid := tview.NewGrid()
 	grid.SetSize(10, 10, 0, 0).
-		AddItem(dropdown, 0, 0, 1, 3, 0, 0, true).
-		AddItem(inputField, 0, 3, 1, 7, 0, 0, true).
-		AddItem(listView, 1, 0, 6, 10, 0, 0, true).
-		AddItem(detailsBox, 7, 0, 3, 10, 0, 0, true)
+		AddItem(dropdown, 0, 0, 2, 3, 0, 0, true).
+		AddItem(inputField, 0, 3, 2, 7, 0, 0, true).
+		AddItem(listView, 2, 0, 8, 5, 0, 0, true).
+		AddItem(detailsBox, 2, 5, 8, 5, 0, 0, true)
 
 	dropdown.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
@@ -105,7 +114,34 @@ func Viewer() {
 		return event
 	})
 
-	if err := app.SetRoot(grid, true).SetFocus(dropdown).Run(); err != nil {
+	modal := func(p tview.Primitive, width, height int) tview.Primitive {
+		return tview.NewFlex().
+			AddItem(nil, 0, 1, false).
+			AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
+				AddItem(nil, 0, 1, false).
+				AddItem(p, height, 1, true).
+				AddItem(nil, 0, 1, false), width, 1, true).
+			AddItem(nil, 0, 1, false)
+	}
+	form := tview.NewForm().
+		AddInputField("Owner", "", 20, nil, nil).
+		AddInputField("Repo", "", 20, nil, nil).
+		AddInputField("Path", "", 20, nil, nil).
+		AddPasswordField("Token", "", 50, '*', nil).
+		AddCheckbox("IsEnterprise", false, nil).
+		AddInputField("BaseURL", "", 50, nil, nil).
+		AddInputField("UploadURL", "", 50, nil, nil).
+		AddButton("Save", func() {
+		}).
+		AddButton("Quit", func() {
+			pages.HidePage("modal")
+			app.SetFocus(dropdown)
+		})
+
+	pages.AddPage("background", grid, true, true).
+		AddPage("modal", modal(form, 50, 20), true, true)
+	pages.HidePage("modal")
+	if err := app.SetRoot(pages, true).Run(); err != nil {
 		panic(err)
 	}
 }
