@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
@@ -15,16 +16,15 @@ type Config struct {
 	Source []Source `json:"source"`
 }
 
-func loadConfig() Config {
-	bytes, err := ioutil.ReadFile("config.json")
+func (c *Config) loadConfig() {
+	home, _ := os.UserHomeDir()
+	bytes, err := ioutil.ReadFile(fmt.Sprintf("%s/.trv/config.json", home))
 	if err != nil {
 		log.Fatal(err)
 	}
-	var config Config
-	if err := json.Unmarshal(bytes, &config); err != nil {
+	if err := json.Unmarshal(bytes, &c); err != nil {
 		log.Fatal(err)
 	}
-	return config
 }
 
 func (c Config) getSourceList() []string {
@@ -33,6 +33,16 @@ func (c Config) getSourceList() []string {
 		sourceList = append(sourceList, fmt.Sprintf("%s/%s", v.Repo, v.Path))
 	}
 	return sourceList
+}
+func (c *Config) addSource(s Source) {
+	c.Source = append(c.Source, s)
+	c.saveConfig()
+}
+
+func (c Config) saveConfig() {
+	home, _ := os.UserHomeDir()
+	file, _ := json.MarshalIndent(c, "", " ")
+	_ = ioutil.WriteFile(fmt.Sprintf("%s/.trv/config.json", home), file, 0644)
 }
 
 func (s Source) NewClient() (*github.Client, context.Context) {

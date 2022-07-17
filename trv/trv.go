@@ -8,8 +8,6 @@ import (
 	"github.com/rivo/tview"
 )
 
-const addSource = "add source"
-
 type Trv struct {
 	Config         Config
 	Source         []string
@@ -24,6 +22,8 @@ type Trv struct {
 	InfoTable      *tview.Table
 	App            *tview.Application
 	Layout         *tview.Grid
+	Modal          tview.Primitive
+	Form           *tview.Form
 }
 
 func (t *Trv) Init() {
@@ -40,6 +40,11 @@ func (t *Trv) Init() {
 	t.setInfoTable()
 	t.setInfoLayout()
 	t.setLayout()
+	t.setForm()
+	t.setModal()
+	t.setPages()
+
+	t.Pages.HidePage("modal")
 
 	t.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
@@ -56,7 +61,7 @@ func (t *Trv) Init() {
 
 // Set Config
 func (t *Trv) setConfig() {
-	t.Config = loadConfig()
+	t.Config.loadConfig()
 }
 
 // Set Source
@@ -69,12 +74,17 @@ func (t *Trv) setSourceSelecter() {
 	t.SourceSelecter = tview.NewDropDown()
 	t.SourceSelecter.SetLabel("data source: ").
 		SetOptions(t.Source, func(text string, index int) {
+			if index > len(t.Source)-1 {
+				return
+			}
 			t.DB = t.Config.Source[index].setDbData()
 			t.Tables = t.DB.tables
-			t.TableViewer.Clear()
 			t.filterList()
 			t.App.SetFocus(t.Searcher)
 		})
+	t.SourceSelecter.AddOption("add source", func() {
+		t.Pages.ShowPage("modal")
+	})
 	t.SourceSelecter.SetBorder(true)
 }
 
@@ -119,9 +129,51 @@ func (t *Trv) setInfoTable() {
 		SetCell(1, 1, tview.NewTableCell("")).
 		SetCell(1, 2, tview.NewTableCell(""))
 }
-
+func (t *Trv) setForm() {
+	var source Source
+	t.Form = tview.NewForm().
+		AddInputField("Owner", "", 20, nil, func(text string) {
+			source.Owner = text
+		}).
+		AddInputField("Repo", "", 20, nil, func(text string) {
+			source.Repo = text
+		}).
+		AddInputField("Path", "", 20, nil, func(text string) {
+			source.Path = text
+		}).
+		AddPasswordField("Token", "", 50, '*', func(text string) {
+			source.Token = text
+		}).
+		AddCheckbox("IsEnterprise", false, func(checked bool) {
+			source.IsEnterprise = checked
+		}).
+		AddInputField("BaseURL", "", 50, nil, func(text string) {
+			source.BaseURL = text
+		}).
+		AddInputField("UploadURL", "", 50, nil, func(text string) {
+			source.UploadURL = text
+		}).
+		AddButton("Save", func() {
+			t.Config.addSource(source)
+			t.setSource()
+			t.setSourceSelecter()
+			t.Pages.HidePage("modal")
+		}).
+		AddButton("Quit", func() {
+			t.Pages.HidePage("modal")
+		})
+	t.Form.SetBorder(true).SetTitle("add data source")
+}
+func (t *Trv) setModal() {
+	t.Modal = tview.NewGrid().
+		SetColumns(0, 4, 0).
+		SetRows(0, 4, 0).
+		AddItem(t.Form, 0, 0, 4, 4, 0, 0, true)
+}
 func (t *Trv) setPages() {
-	t.Pages = tview.NewPages()
+	t.Pages = tview.NewPages().
+		AddPage("background", t.Layout, true, true).
+		AddPage("modal", t.Modal, true, true)
 }
 
 func (t *Trv) setInfoLayout() {
@@ -168,7 +220,7 @@ func (t *Trv) filterList() {
 }
 
 func (t Trv) Draw() {
-	if err := t.App.SetRoot(t.Layout, true).SetFocus(t.SourceSelecter).Run(); err != nil {
+	if err := t.App.SetRoot(t.Pages, true).Run(); err != nil {
 		panic(err)
 	}
 }
