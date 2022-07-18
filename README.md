@@ -1,4 +1,4 @@
-# trv
+![](./logo.png)
 `trv` is a remote viewer for tbls.
 
 # Table of Contents
