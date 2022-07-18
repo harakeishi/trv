@@ -88,6 +88,21 @@ func (t *Trv) setSourceSelecter() {
 	t.SourceSelecter.SetBorder(true)
 }
 
+func (t *Trv) addDropdownOption() {
+	currentOptionCount := t.SourceSelecter.GetOptionCount()
+	lastOptionIndex := len(t.Source) - 1
+	t.SourceSelecter.RemoveOption(currentOptionCount - 1)
+	t.SourceSelecter.AddOption(t.Source[lastOptionIndex], func() {
+		t.DB = t.Config.Source[lastOptionIndex].setDbData()
+		t.Tables = t.DB.tables
+		t.filterList()
+		t.App.SetFocus(t.Searcher)
+	})
+	t.SourceSelecter.AddOption("add source", func() {
+		t.Pages.ShowPage("modal")
+	})
+}
+
 func (t *Trv) setTableViewer() {
 	t.TableViewer = tview.NewList()
 	t.TableViewer.SetTitle("Result")
@@ -156,7 +171,7 @@ func (t *Trv) setForm() {
 		AddButton("Save", func() {
 			t.Config.addSource(source)
 			t.setSource()
-			t.setSourceSelecter()
+			t.addDropdownOption()
 			t.Pages.HidePage("modal")
 		}).
 		AddButton("Quit", func() {
