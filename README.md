@@ -1,4 +1,7 @@
-![](./logo.png)
+<div align="center">
+    <img src="logo.png" alt="logo">
+</div>
+
 `trv` is a remote viewer for tbls.
 
 # Table of Contents
