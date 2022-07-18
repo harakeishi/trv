@@ -2,35 +2,44 @@ package trv
 
 import (
 	"context"
+	"fmt"
 	"strings"
+	"time"
 
 	"github.com/google/go-github/github"
 )
 
-func fetchDbInfo(client *github.Client, ctx context.Context, source Source) []Table {
-	var tables []Table
-	_, contents, _, _ := client.Repositories.GetContents(ctx, source.Owner, source.Repo, source.Path, nil)
-	for _, v := range contents {
-		path := v.GetPath()
-		if strings.Contains(path, ".md") {
-			if strings.Replace(path, ".md", "", -1) == "README" {
-				continue
-			}
-			table := fetchTableInfo(client, ctx, source.Owner, source.Repo, path)
-			tables = append(tables, table)
-		}
-	}
-	return tables
+type Column struct {
+	Name    string
+	Type    string
+	Defaul  bool
+	Comment string
+}
+type Table struct {
+	Name        string
+	Description string
+	Columns     []Column
+	UpdateDate  time.Time
 }
 
-func fetchTableInfo(client *github.Client, ctx context.Context, owner, repo, path string) Table {
-	var table Table
-	content, _, _, _ := client.Repositories.GetContents(ctx, owner, repo, path, nil)
-	table = Table{Name: strings.Replace(content.GetName(), ".md", "", -1)}
-	text, _ := content.GetContent()
-	table.Description = GetDescriptionFromMarkdown(text)
-	table.Columns = MarkdownParseTocolumn(text)
-	return table
+// return table_name.column_name
+func (t Table) getFullName(i int) string {
+	return t.Name + "." + t.Columns[i].Name
+}
+
+func (t *Table) fetchTableInfo(client *github.Client, ctx context.Context, owner, repo, path string) error {
+	content, _, _, err := client.Repositories.GetContents(ctx, owner, repo, path, nil)
+	if err != nil {
+		return fmt.Errorf("fetch table info fail:%w", err)
+	}
+	t.Name = strings.Replace(content.GetName(), ".md", "", -1)
+	text, err := content.GetContent()
+	if err != nil {
+		return fmt.Errorf("fetch table info fail:%w", err)
+	}
+	t.Description = GetDescriptionFromMarkdown(text)
+	t.Columns = MarkdownParseTocolumn(text)
+	return nil
 }
 
 func GetDescriptionFromMarkdown(text string) string {
@@ -38,6 +47,7 @@ func GetDescriptionFromMarkdown(text string) string {
 	d := strings.Split(tmp[3], "\n")
 	return d[2]
 }
+
 func MarkdownParseTocolumn(text string) []Column {
 	var result []Column
 	tmp := strings.Split(text, "#")

@@ -1,5 +1,7 @@
 package trv
 
+import "fmt"
+
 type Source struct {
 	Owner        string `json:"owner"`
 	Repo         string `json:"repo"`
@@ -28,7 +30,9 @@ func (s Source) setDbData() (DB, error) {
 		return db, nil
 	}
 
-	db.tables = fetchDbInfo(client, ctx, s)
+	if err := db.fetchDBInfo(client, ctx, s); err != nil {
+		return DB{}, fmt.Errorf("set DB data fail:%w", err)
+	}
 	db.saveData(s.Repo, s.Path)
 	return db, nil
 }
