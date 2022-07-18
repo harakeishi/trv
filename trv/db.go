@@ -20,7 +20,7 @@ type Table struct {
 	Columns     []Column
 	UpdateDate  time.Time
 }
-type Db struct {
+type DB struct {
 	tables []Table
 }
 
@@ -30,7 +30,7 @@ func (t Table) getFullName(i int) string {
 }
 
 // If there is DB data locally, load it and return it.
-func (d *Db) loadData(repo, path string) {
+func (d *DB) loadData(repo, path string) {
 	home, _ := os.UserHomeDir()
 	raw, err := ioutil.ReadFile(fmt.Sprintf("%s/.trv/%s-%s.json", home, repo, path))
 	if err != nil {
@@ -40,7 +40,7 @@ func (d *Db) loadData(repo, path string) {
 }
 
 // Store DB data locally.
-func (d *Db) saveData(repo, path string) {
+func (d *DB) saveData(repo, path string) {
 	home, _ := os.UserHomeDir()
 	if f, err := os.Stat(fmt.Sprintf("%s/.trv", home)); os.IsNotExist(err) || !f.IsDir() {
 		if err := os.Mkdir(fmt.Sprintf("%s/.trv", home), 0777); err != nil {

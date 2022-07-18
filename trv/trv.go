@@ -11,7 +11,7 @@ import (
 type Trv struct {
 	Config         Config
 	Source         []string
-	DB             Db
+	DB             DB
 	Tables         []Table
 	SourceSelecter *tview.DropDown
 	TableViewer    *tview.List
@@ -26,14 +26,23 @@ type Trv struct {
 	Form           *tview.Form
 }
 
-func (t *Trv) Init() {
+/*
+Prepare to start trv.
+Specifically, loading the configuration, loading the data, and preparing the TUI.
+*/
+func (t *Trv) Init() error {
 	//set data
-	t.setConfig()
+	if err := t.setConfig(); err != nil {
+		return err
+	}
 	t.setSource()
+
 	// gui setting
 	t.App = tview.NewApplication()
 	t.App.EnableMouse(true)
-	t.setSourceSelecter()
+	if err := t.setSourceSelecter(); err != nil {
+		return err
+	}
 	t.setSearcher()
 	t.setTableViewer()
 	t.setInfoText()
@@ -57,11 +66,15 @@ func (t *Trv) Init() {
 		}
 		return event
 	})
+	return nil
 }
 
 // Set Config
-func (t *Trv) setConfig() {
-	t.Config.loadConfig()
+func (t *Trv) setConfig() error {
+	if err := t.Config.loadConfig(); err != nil {
+		return fmt.Errorf("setConfig fail: %w", err)
+	}
+	return nil
 }
 
 // Set Source
@@ -70,52 +83,53 @@ func (t *Trv) setSource() {
 }
 
 // set Source Selecter
-func (t *Trv) setSourceSelecter() {
+func (t *Trv) setSourceSelecter() error {
+	var err error
 	t.SourceSelecter = tview.NewDropDown()
 	t.SourceSelecter.SetLabel("data source: ").
 		SetOptions(t.Source, func(text string, index int) {
 			if index > len(t.Source)-1 {
 				return
 			}
-			t.DB = t.Config.Source[index].setDbData()
+			t.DB, err = t.Config.Source[index].setDbData()
 			t.Tables = t.DB.tables
 			t.filterList()
 			t.App.SetFocus(t.Searcher)
 		})
+	if err != nil {
+		return fmt.Errorf("set source selecter fail:%w", err)
+	}
 	t.SourceSelecter.AddOption("add source", func() {
 		t.Pages.ShowPage("modal")
 	})
 	t.SourceSelecter.SetBorder(true)
+	return nil
 }
 
-func (t *Trv) addDropdownOption() {
+func (t *Trv) addDropdownOption() error {
+	var err error
 	currentOptionCount := t.SourceSelecter.GetOptionCount()
 	lastOptionIndex := len(t.Source) - 1
 	t.SourceSelecter.RemoveOption(currentOptionCount - 1)
 	t.SourceSelecter.AddOption(t.Source[lastOptionIndex], func() {
-		t.DB = t.Config.Source[lastOptionIndex].setDbData()
+		t.DB, err = t.Config.Source[lastOptionIndex].setDbData()
 		t.Tables = t.DB.tables
 		t.filterList()
 		t.App.SetFocus(t.Searcher)
 	})
+	if err != nil {
+		return fmt.Errorf("add dropdown option fail:%w", err)
+	}
 	t.SourceSelecter.AddOption("add source", func() {
 		t.Pages.ShowPage("modal")
 	})
+	return nil
 }
 
 func (t *Trv) setTableViewer() {
 	t.TableViewer = tview.NewList()
 	t.TableViewer.SetTitle("Result")
 	t.TableViewer.SetBorder(true)
-
-	t.TableViewer.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Key() {
-		case tcell.KeyCtrlSpace:
-			t.App.SetFocus(t.Searcher)
-			return nil
-		}
-		return event
-	})
 }
 
 func (t *Trv) setSearcher() {
@@ -144,6 +158,8 @@ func (t *Trv) setInfoTable() {
 		SetCell(1, 1, tview.NewTableCell("")).
 		SetCell(1, 2, tview.NewTableCell(""))
 }
+
+// set new source form
 func (t *Trv) setForm() {
 	var source Source
 	t.Form = tview.NewForm().
@@ -179,18 +195,23 @@ func (t *Trv) setForm() {
 		})
 	t.Form.SetBorder(true).SetTitle("add data source")
 }
+
+// set add source modal
 func (t *Trv) setModal() {
 	t.Modal = tview.NewGrid().
 		SetColumns(0, 4, 0).
 		SetRows(0, 4, 0).
 		AddItem(t.Form, 0, 0, 4, 4, 0, 0, true)
 }
+
+// set pages
 func (t *Trv) setPages() {
 	t.Pages = tview.NewPages().
 		AddPage("background", t.Layout, true, true).
 		AddPage("modal", t.Modal, true, true)
 }
 
+// Set the layout of the area displaying information about the column
 func (t *Trv) setInfoLayout() {
 	t.InfoLayout = tview.NewGrid()
 	t.InfoLayout.SetTitle("details").SetBorder(true)
@@ -199,6 +220,8 @@ func (t *Trv) setInfoLayout() {
 		AddItem(t.InfoTable, 2, 0, 3, 5, 2, 5, true)
 	t.InfoLayout.SetOffset(1, 1)
 }
+
+// set layout
 func (t *Trv) setLayout() {
 	t.Layout = tview.NewGrid()
 	t.Layout.SetSize(10, 10, 0, 0).
@@ -208,7 +231,7 @@ func (t *Trv) setLayout() {
 		AddItem(t.InfoLayout, 2, 5, 8, 5, 0, 0, true)
 }
 
-//filterList(list *tview.List, items []Table, target string, textView *tview.TextView, table *tview.Table) *tview.List {
+// Filter and display data
 func (t *Trv) filterList() {
 	target := t.Searcher.GetText()
 	t.TableViewer.Clear()

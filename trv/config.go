@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/google/go-github/github"
@@ -16,15 +15,19 @@ type Config struct {
 	Source []Source `json:"source"`
 }
 
-func (c *Config) loadConfig() {
-	home, _ := os.UserHomeDir()
+func (c *Config) loadConfig() error {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
 	bytes, err := ioutil.ReadFile(fmt.Sprintf("%s/.trv/config.json", home))
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	if err := json.Unmarshal(bytes, &c); err != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }
 
 func (c Config) getSourceList() []string {
@@ -45,18 +48,22 @@ func (c Config) saveConfig() {
 	_ = ioutil.WriteFile(fmt.Sprintf("%s/.trv/config.json", home), file, 0644)
 }
 
-func (s Source) NewClient() (*github.Client, context.Context) {
+func (s Source) NewClient() (*github.Client, context.Context, error) {
 	var client *github.Client
 	var ts oauth2.TokenSource
+	var err error
 	ts = oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: s.Token},
 	)
 	ctx := context.Background()
 	tc := oauth2.NewClient(ctx, ts)
 	if s.IsEnterprise {
-		client, _ = github.NewEnterpriseClient(s.BaseURL, s.UploadURL, tc)
+		client, err = github.NewEnterpriseClient(s.BaseURL, s.UploadURL, tc)
+		if err != nil {
+			return nil, nil, fmt.Errorf("new client fail:%w", err)
+		}
 	} else {
 		client = github.NewClient(tc)
 	}
-	return client, ctx
+	return client, ctx, nil
 }
