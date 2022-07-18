@@ -5,9 +5,9 @@ go 1.18
 require (
 	github.com/gdamore/tcell/v2 v2.4.1-0.20210905002822-f057f0a857a1
 	github.com/google/go-github v17.0.0+incompatible
+	github.com/harakeishi/curver v0.1.2
 	github.com/rivo/tview v0.0.0-20220307222120-9994674d60a8
 	github.com/spf13/cobra v1.4.0
-	github.com/yuin/goldmark v1.1.32
 	golang.org/x/oauth2 v0.0.0-20220524215830-622c5d57e401
 )
 
