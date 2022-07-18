@@ -163,16 +163,16 @@ func (t *Trv) setInfoTable() {
 func (t *Trv) setForm() {
 	var source Source
 	t.Form = tview.NewForm().
-		AddInputField("Owner", "", 20, nil, func(text string) {
+		AddInputField("Owner(required)", "", 20, nil, func(text string) {
 			source.Owner = text
 		}).
-		AddInputField("Repo", "", 20, nil, func(text string) {
+		AddInputField("Repo(required)", "", 20, nil, func(text string) {
 			source.Repo = text
 		}).
-		AddInputField("Path", "", 20, nil, func(text string) {
+		AddInputField("Path(required)", "", 20, nil, func(text string) {
 			source.Path = text
 		}).
-		AddPasswordField("Token", "", 50, '*', func(text string) {
+		AddPasswordField("Token(required)", "", 50, '*', func(text string) {
 			source.Token = text
 		}).
 		AddCheckbox("IsEnterprise", false, func(checked bool) {
