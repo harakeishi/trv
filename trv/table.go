@@ -50,9 +50,15 @@ func GetDescriptionFromMarkdown(text string) string {
 
 func MarkdownParseTocolumn(text string) []Column {
 	var result []Column
+	var columIndex int
 	tmp := strings.Split(text, "#")
-	rows := strings.Split(tmp[5], "\n")
+	for i, v := range tmp {
+		if strings.Contains(v, "Columns") {
+			columIndex = i
+		}
+	}
 
+	rows := strings.Split(tmp[columIndex], "\n")
 	header := strings.Split(rows[2], "|")
 	nameIndex := index(header, "Name")
 	typeIndex := index(header, "Type")

@@ -22,7 +22,7 @@ func (d *DB) loadData(repo, path string) {
 	if err != nil {
 		log.Printf("loadData fail:%s", err)
 	}
-	raw, _ := ioutil.ReadFile(fmt.Sprintf("%s/.trv/%s-%s.json", home, repo, path))
+	raw, _ := ioutil.ReadFile(fmt.Sprintf("%s/.trv/%s-%s.json", home, repo, strings.Replace(path, "/", "-", -1)))
 	json.Unmarshal(raw, &d.tables)
 }
 
@@ -41,7 +41,7 @@ func (d *DB) saveData(repo, path string) {
 	if err != nil {
 		log.Printf("saveData fail:%s", err)
 	}
-	if err := ioutil.WriteFile(fmt.Sprintf("%s/.trv/%s-%s.json", home, repo, path), file, 0644); err != nil {
+	if err := ioutil.WriteFile(fmt.Sprintf("%s/.trv/%s-%s.json", home, repo, strings.Replace(path, "/", "-", -1)), file, 0644); err != nil {
 		log.Printf("saveData fail:%s", err)
 	}
 }
@@ -54,7 +54,7 @@ func (d *DB) fetchDBInfo(client *github.Client, ctx context.Context, source Sour
 	for _, v := range contents {
 		path := v.GetPath()
 		if strings.Contains(path, ".md") {
-			if strings.Replace(path, ".md", "", -1) == "README" {
+			if strings.Contains(path, "README.md") {
 				continue
 			}
 			var table Table
