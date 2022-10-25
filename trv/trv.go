@@ -2,6 +2,7 @@ package trv
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
@@ -31,6 +32,7 @@ Prepare to start trv.
 Specifically, loading the configuration, loading the data, and preparing the TUI.
 */
 func (t *Trv) Init() error {
+	os.Setenv("LC_CTYPE", "en_US.UTF-8")
 	//set data
 	if err := t.setConfig(); err != nil {
 		return err
@@ -86,6 +88,7 @@ func (t *Trv) setSource() {
 func (t *Trv) setSourceSelecter() error {
 	var err error
 	t.SourceSelecter = tview.NewDropDown()
+	t.SourceSelecter.SetTitle("data source(Ctrl+d)")
 	t.SourceSelecter.SetLabel("data source: ").
 		SetOptions(t.Source, func(text string, index int) {
 			if index > len(t.Source)-1 {
@@ -106,6 +109,7 @@ func (t *Trv) setSourceSelecter() error {
 	return nil
 }
 
+// add dropdown option
 func (t *Trv) addDropdownOption() error {
 	var err error
 	currentOptionCount := t.SourceSelecter.GetOptionCount()
@@ -126,14 +130,17 @@ func (t *Trv) addDropdownOption() error {
 	return nil
 }
 
+// set table view
 func (t *Trv) setTableViewer() {
 	t.TableViewer = tview.NewList()
-	t.TableViewer.SetTitle("Result")
+	t.TableViewer.SetTitle("Result(Ctrl+r)")
 	t.TableViewer.SetBorder(true)
 }
 
+// set search box
 func (t *Trv) setSearcher() {
 	t.Searcher = tview.NewInputField()
+	t.Searcher.SetTitle("serach(Ctrl+s)")
 	t.Searcher.SetLabel("serach:")
 	t.Searcher.SetBorder(true)
 	t.Searcher.SetChangedFunc(func(text string) {
@@ -247,7 +254,10 @@ func (t *Trv) filterList() {
 								t.InfoTable.RemoveRow(1)
 								t.InfoTable.SetCell(1, 0, tview.NewTableCell(b.Name))
 								t.InfoTable.SetCell(1, 1, tview.NewTableCell(b.Type))
-								t.InfoTable.SetCell(1, 2, tview.NewTableCell(b.Comment))
+								comment := tview.NewTableCell(b.Comment)
+								comment.SetMaxWidth(10)
+								comment.SetExpansion(10)
+								t.InfoTable.SetCell(1, 2, comment)
 							}
 						}
 					}

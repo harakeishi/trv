@@ -13,6 +13,7 @@ require (
 
 require (
 	github.com/gdamore/encoding v1.0.0 // indirect
+	github.com/genkiroid/cert v0.0.0-20191007122723-897560fbbe50 // indirect
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
