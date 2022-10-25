@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/mattn/go-runewidth"
 	"github.com/rivo/tview"
 )
 
@@ -268,6 +269,7 @@ func (t *Trv) filterList() {
 }
 
 func (t Trv) Draw() {
+	runewidth.DefaultCondition = &runewidth.Condition{EastAsianWidth: false}
 	if err := t.App.SetRoot(t.Pages, true).Run(); err != nil {
 		panic(err)
 	}
