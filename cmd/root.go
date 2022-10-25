@@ -22,7 +22,10 @@ var rootCmd = &cobra.Command{
 			return nil
 		}
 		var trv trv.Trv
-		trv.Init()
+		err = trv.Init()
+		if err != nil {
+			return err
+		}
 		trv.Draw()
 		return nil
 	},
