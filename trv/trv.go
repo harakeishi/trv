@@ -272,3 +272,43 @@ func (t Trv) Draw() {
 		panic(err)
 	}
 }
+
+func (t Trv) CreateConfig() {
+	runewidth.DefaultCondition = &runewidth.Condition{EastAsianWidth: false}
+	t.App = tview.NewApplication()
+	var source Source
+	Form := tview.NewForm().
+		AddInputField("Owner(required)", "", 20, nil, func(text string) {
+			source.Owner = text
+		}).
+		AddInputField("Repo(required)", "", 20, nil, func(text string) {
+			source.Repo = text
+		}).
+		AddInputField("Path(required)", "", 20, nil, func(text string) {
+			source.Path = text
+		}).
+		AddPasswordField("Token(required)", "", 50, '*', func(text string) {
+			source.Token = text
+		}).
+		AddCheckbox("IsEnterprise", false, func(checked bool) {
+			source.IsEnterprise = checked
+		}).
+		AddInputField("BaseURL", "", 50, nil, func(text string) {
+			source.BaseURL = text
+		}).
+		AddInputField("UploadURL", "", 50, nil, func(text string) {
+			source.UploadURL = text
+		}).
+		AddButton("Save", func() {
+			t.Config.addSource(source)
+			t.setSource()
+			t.App.Stop()
+		}).
+		AddButton("Quit", func() {
+			t.App.Stop()
+		})
+	Form.SetBorder(true).SetTitle("create config")
+	if err := t.App.SetRoot(Form, true).Run(); err != nil {
+		panic(err)
+	}
+}

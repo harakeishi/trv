@@ -22,11 +22,21 @@ var rootCmd = &cobra.Command{
 			return nil
 		}
 		var trv trv.Trv
-		err = trv.Init()
+
+		exists, err := trv.Config.Exists()
 		if err != nil {
 			return err
 		}
-		trv.Draw()
+		if exists {
+			err = trv.Init()
+			if err != nil {
+				return err
+			}
+			trv.Draw()
+		} else {
+			trv.CreateConfig()
+		}
+
 		return nil
 	},
 }

@@ -15,6 +15,18 @@ type Config struct {
 	Source []Source `json:"source"`
 }
 
+func (c Config) Exists() (bool, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return false, err
+	}
+
+	if f, err := os.Stat(fmt.Sprintf("%s/.trv/config.json", home)); os.IsNotExist(err) || f.IsDir() {
+		return false, nil
+	} else {
+		return true, nil
+	}
+}
 func (c *Config) loadConfig() error {
 	home, err := os.UserHomeDir()
 	if err != nil {
