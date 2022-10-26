@@ -16,7 +16,7 @@ This command is used to view `tbls` information stored in github, e.g. in a term
 - [License](#license)
 
 # DEMO
-![image](https://user-images.githubusercontent.com/44335168/198059491-52ac70e7-ea02-4c24-9297-e200c264bdcf.png)
+![image](https://user-images.githubusercontent.com/44335168/198061401-44dfb274-2d2a-43fe-aef2-e6a120cb48b8.gif)
 
 # Installation
  
