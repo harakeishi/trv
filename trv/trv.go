@@ -2,7 +2,6 @@ package trv
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
@@ -33,7 +32,7 @@ Prepare to start trv.
 Specifically, loading the configuration, loading the data, and preparing the TUI.
 */
 func (t *Trv) Init() error {
-	os.Setenv("LC_CTYPE", "en_US.UTF-8")
+	runewidth.DefaultCondition = &runewidth.Condition{EastAsianWidth: false}
 	//set data
 	if err := t.setConfig(); err != nil {
 		return err
@@ -269,7 +268,6 @@ func (t *Trv) filterList() {
 }
 
 func (t Trv) Draw() {
-	runewidth.DefaultCondition = &runewidth.Condition{EastAsianWidth: false}
 	if err := t.App.SetRoot(t.Pages, true).Run(); err != nil {
 		panic(err)
 	}
