@@ -1,5 +1,5 @@
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <div align="center">    
@@ -70,6 +70,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tbody>
     <tr>
       <td align="center"><a href="https://github.com/tommy6073"><img src="https://avatars.githubusercontent.com/u/3647470?v=4?s=100" width="100px;" alt="Takayuki Nagatomi"/><br /><sub><b>Takayuki Nagatomi</b></sub></a><br /><a href="https://github.com/harakeishi/trv/commits?author=tommy6073" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/dojineko"><img src="https://avatars.githubusercontent.com/u/1488898?v=4?s=100" width="100px;" alt="dojineko"/><br /><sub><b>dojineko</b></sub></a><br /><a href="https://github.com/harakeishi/trv/commits?author=dojineko" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
