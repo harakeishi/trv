@@ -140,8 +140,8 @@ func (t *Trv) setTableViewer() {
 // set search box
 func (t *Trv) setSearcher() {
 	t.Searcher = tview.NewInputField()
-	t.Searcher.SetTitle("serach(Ctrl+s)")
-	t.Searcher.SetLabel("serach:")
+	t.Searcher.SetTitle("search(Ctrl+s)")
+	t.Searcher.SetLabel("search:")
 	t.Searcher.SetBorder(true)
 	t.Searcher.SetChangedFunc(func(text string) {
 		t.filterList()
