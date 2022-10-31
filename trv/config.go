@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
@@ -57,7 +58,11 @@ func (c *Config) addSource(s Source) {
 func (c Config) saveConfig() {
 	home, _ := os.UserHomeDir()
 	file, _ := json.MarshalIndent(c, "", " ")
-	_ = ioutil.WriteFile(fmt.Sprintf("%s/.trv/config.json", home), file, 0644)
+	dir := filepath.Join(home, ".trv")
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		_ = os.Mkdir(dir, 0755)
+	}
+	_ = ioutil.WriteFile(filepath.Join(dir, "config.json"), file, 0644)
 }
 
 func (s Source) NewClient() (*github.Client, context.Context, error) {
