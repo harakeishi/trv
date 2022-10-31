@@ -1,4 +1,7 @@
 <div align="center">
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
     <img src="logo.png" alt="logo">
 </div>
 
@@ -55,3 +58,24 @@ target: https://github.com/harakeishi/trv/tree/v0.0.11/sampledb
 
 # License
 [MIT](LICENSE)
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center"><a href="https://github.com/tommy6073"><img src="https://avatars.githubusercontent.com/u/3647470?v=4?s=100" width="100px;" alt="Takayuki Nagatomi"/><br /><sub><b>Takayuki Nagatomi</b></sub></a><br /><a href="https://github.com/harakeishi/trv/commits?author=tommy6073" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
