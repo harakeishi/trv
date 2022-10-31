@@ -1,0 +1,25 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "tommy6073",
+      "name": "Takayuki Nagatomi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3647470?v=4",
+      "profile": "https://github.com/tommy6073",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "trv",
+  "projectOwner": "harakeishi"
+}
