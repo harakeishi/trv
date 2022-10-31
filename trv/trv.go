@@ -24,7 +24,9 @@ type Trv struct {
 	App            *tview.Application
 	Layout         *tview.Grid
 	Modal          tview.Primitive
+	ErrorModal     tview.Primitive
 	Form           *tview.Form
+	ErrorWindow    *tview.Modal
 }
 
 /*
@@ -53,9 +55,11 @@ func (t *Trv) Init() error {
 	t.setLayout()
 	t.setForm()
 	t.setModal()
+	t.setErrorModal()
 	t.setPages()
 
 	t.Pages.HidePage("modal")
+	t.Pages.HidePage("error")
 
 	t.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
@@ -95,6 +99,12 @@ func (t *Trv) setSourceSelecter() error {
 				return
 			}
 			t.DB, err = t.Config.Source[index].setDbData()
+			if err != nil {
+				t.ErrorWindow.SetText(fmt.Sprintf("-ERROR-\n%s", err))
+				t.ErrorWindow.Box.SetTitle("ERROR")
+				t.Pages.ShowPage("error")
+				return
+			}
 			t.Tables = t.DB.tables
 			t.filterList()
 			t.App.SetFocus(t.Searcher)
@@ -211,11 +221,28 @@ func (t *Trv) setModal() {
 		AddItem(t.Form, 0, 0, 4, 4, 0, 0, true)
 }
 
+func (t *Trv) setErrorModal() {
+	t.ErrorWindow = tview.NewModal().
+		SetText("Do you want to quit the application?").
+		AddButtons([]string{"Quit"}).
+		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+			if buttonLabel == "Quit" {
+				t.App.Stop()
+			}
+		})
+
+	t.ErrorModal = tview.NewGrid().
+		SetColumns(0, 4, 0).
+		SetRows(0, 4, 0).
+		AddItem(t.ErrorWindow, 0, 0, 4, 4, 0, 0, true)
+}
+
 // set pages
 func (t *Trv) setPages() {
 	t.Pages = tview.NewPages().
 		AddPage("background", t.Layout, true, true).
-		AddPage("modal", t.Modal, true, true)
+		AddPage("modal", t.Modal, true, true).
+		AddPage("error", t.ErrorModal, true, true)
 }
 
 // Set the layout of the area displaying information about the column
