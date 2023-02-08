@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/google/go-github/github"
 )
@@ -20,7 +19,6 @@ type Table struct {
 	Name        string   `json:"name"`
 	Description string   `json:"comment"`
 	Columns     []Column `json:"columns"`
-	UpdateDate  time.Time
 }
 
 // return table_name.column_name
