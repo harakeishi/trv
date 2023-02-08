@@ -1,4 +1,4 @@
-# media_types
+# playlists
 
 ## Description
 
@@ -6,9 +6,9 @@
 <summary><strong>Table Definition</strong></summary>
 
 ```sql
-CREATE TABLE "media_types"
+CREATE TABLE "playlists"
 (
-    [MediaTypeId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    [PlaylistId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     [Name] NVARCHAR(120)
 )
 ```
@@ -19,18 +19,18 @@ CREATE TABLE "media_types"
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| MediaTypeId | INTEGER |  | false | [tracks](tracks.md) |  |  |
+| PlaylistId | INTEGER |  | false | [playlist_track](playlist_track.md) |  |  |
 | Name | NVARCHAR(120) |  | true |  |  |  |
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
-| MediaTypeId | PRIMARY KEY | PRIMARY KEY (MediaTypeId) |
+| PlaylistId | PRIMARY KEY | PRIMARY KEY (PlaylistId) |
 
 ## Relations
 
-![er](media_types.svg)
+![er](playlists.svg)
 
 ---
 
