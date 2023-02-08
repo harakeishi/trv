@@ -10,16 +10,17 @@ import (
 )
 
 type Column struct {
-	Name    string
-	Type    string
-	Defaul  bool
-	Comment string
+	Name     string `json:"name"`
+	Type     string `json:"type"`
+	Nullable bool   `json:"nullable"`
+	Defaul   bool   `json:"default"`
+	Comment  string `json:"comment"`
 }
 type Table struct {
-	Name        string
-	Description string
-	Columns     []Column
-	UpdateDate  time.Time
+	Name        string    `json:"name"`
+	Description string    `json:"comment"`
+	Columns     []Column  `json:"columns"`
+	UpdateDate  time.Time `json:"tables"`
 }
 
 // return table_name.column_name
@@ -27,7 +28,7 @@ func (t Table) getFullName(i int) string {
 	return t.Name + "." + t.Columns[i].Name
 }
 
-func (t *Table) fetchTableInfo(client *github.Client, ctx context.Context, owner, repo, path string) error {
+func (t *Table) fetchTableInfoFromMarkdown(client *github.Client, ctx context.Context, owner, repo, path string) error {
 	content, _, _, err := client.Repositories.GetContents(ctx, owner, repo, path, nil)
 	if err != nil {
 		return fmt.Errorf("fetch table info fail:%w", err)

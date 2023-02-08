@@ -26,10 +26,6 @@ func (s Source) setDbData() (DB, error) {
 		return DB{}, err
 	}
 
-	if len(db.tables) != 0 {
-		return db, nil
-	}
-
 	if err := db.fetchDBInfo(client, ctx, s); err != nil {
 		return DB{}, fmt.Errorf("set DB data fail:%w", err)
 	}
