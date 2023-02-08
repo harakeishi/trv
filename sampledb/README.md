@@ -1,5 +1,5 @@
 # chinook.db
-This is what is published in　https://www.sqlitetutorial.net/sqlite-sample-database/
+
 ## Tables
 
 | Name | Columns | Comment | Type |

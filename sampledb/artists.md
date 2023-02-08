@@ -1,4 +1,4 @@
-# playlists
+# artists
 
 ## Description
 
@@ -6,9 +6,9 @@
 <summary><strong>Table Definition</strong></summary>
 
 ```sql
-CREATE TABLE "playlists"
+CREATE TABLE "artists"
 (
-    [PlaylistId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    [ArtistId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     [Name] NVARCHAR(120)
 )
 ```
@@ -19,18 +19,18 @@ CREATE TABLE "playlists"
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| PlaylistId | INTEGER |  | false | [playlist_track](playlist_track.md) |  |  |
+| ArtistId | INTEGER |  | false | [albums](albums.md) |  |  |
 | Name | NVARCHAR(120) |  | true |  |  |  |
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
-| PlaylistId | PRIMARY KEY | PRIMARY KEY (PlaylistId) |
+| ArtistId | PRIMARY KEY | PRIMARY KEY (ArtistId) |
 
 ## Relations
 
-![er](playlists.svg)
+![er](artists.svg)
 
 ---
 

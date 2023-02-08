@@ -1,4 +1,4 @@
-# artists
+# media_types
 
 ## Description
 
@@ -6,9 +6,9 @@
 <summary><strong>Table Definition</strong></summary>
 
 ```sql
-CREATE TABLE "artists"
+CREATE TABLE "media_types"
 (
-    [ArtistId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    [MediaTypeId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     [Name] NVARCHAR(120)
 )
 ```
@@ -19,18 +19,18 @@ CREATE TABLE "artists"
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| ArtistId | INTEGER |  | false | [albums](albums.md) |  |  |
+| MediaTypeId | INTEGER |  | false | [tracks](tracks.md) |  |  |
 | Name | NVARCHAR(120) |  | true |  |  |  |
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
-| ArtistId | PRIMARY KEY | PRIMARY KEY (ArtistId) |
+| MediaTypeId | PRIMARY KEY | PRIMARY KEY (MediaTypeId) |
 
 ## Relations
 
-![er](artists.svg)
+![er](media_types.svg)
 
 ---
 
