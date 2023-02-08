@@ -17,10 +17,10 @@ type Column struct {
 	Comment  string `json:"comment"`
 }
 type Table struct {
-	Name        string    `json:"name"`
-	Description string    `json:"comment"`
-	Columns     []Column  `json:"columns"`
-	UpdateDate  time.Time `json:"tables"`
+	Name        string   `json:"name"`
+	Description string   `json:"comment"`
+	Columns     []Column `json:"columns"`
+	UpdateDate  time.Time
 }
 
 // return table_name.column_name
