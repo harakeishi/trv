@@ -58,7 +58,7 @@ func (d *DB) fetchDBInfo(client *github.Client, ctx context.Context, source Sour
 		var table DB
 		err = json.Unmarshal([]byte(text), &table)
 		if err != nil {
-			fmt.Println(err)
+			return fmt.Errorf("fetch table info fail:%w", err)
 		}
 		d.Tables = table.Tables
 	} else {
