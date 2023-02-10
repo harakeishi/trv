@@ -103,7 +103,7 @@ func (t *Trv) setSourceSelecter() error {
 				t.Pages.ShowPage("error")
 				return
 			}
-			t.Tables = t.DB.tables
+			t.Tables = t.DB.Tables
 			t.filterList()
 			t.App.SetFocus(t.Searcher)
 		})
@@ -125,7 +125,7 @@ func (t *Trv) addDropdownOption() error {
 	t.SourceSelecter.RemoveOption(currentOptionCount - 1)
 	t.SourceSelecter.AddOption(t.Source[lastOptionIndex], func() {
 		t.DB, err = t.Config.Source[lastOptionIndex].setDbData()
-		t.Tables = t.DB.tables
+		t.Tables = t.DB.Tables
 		t.filterList()
 		t.App.SetFocus(t.Searcher)
 	})
