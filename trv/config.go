@@ -16,6 +16,7 @@ type Config struct {
 	Source []Source `json:"source"`
 }
 
+// Check if there is a config file
 func (c Config) Exists() (bool, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -28,6 +29,8 @@ func (c Config) Exists() (bool, error) {
 		return true, nil
 	}
 }
+
+// Load the config file
 func (c *Config) loadConfig() error {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -43,6 +46,7 @@ func (c *Config) loadConfig() error {
 	return nil
 }
 
+// Retrieve the source list from the config.
 func (c Config) getSourceList() []string {
 	var sourceList []string
 	for _, v := range c.Source {
@@ -50,11 +54,13 @@ func (c Config) getSourceList() []string {
 	}
 	return sourceList
 }
+
+// Add the source to the config.
 func (c *Config) addSource(s Source) {
 	c.Source = append(c.Source, s)
-	c.saveConfig()
 }
 
+// save the config.
 func (c Config) saveConfig() {
 	home, _ := os.UserHomeDir()
 	file, _ := json.MarshalIndent(c, "", " ")
@@ -65,6 +71,7 @@ func (c Config) saveConfig() {
 	_ = ioutil.WriteFile(filepath.Join(dir, "config.json"), file, 0644)
 }
 
+// Generate GitHub client
 func (s Source) NewClient() (*github.Client, context.Context, error) {
 	var client *github.Client
 	var ts oauth2.TokenSource
