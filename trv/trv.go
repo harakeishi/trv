@@ -2,6 +2,7 @@ package trv
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
@@ -191,7 +192,9 @@ func (t *Trv) setForm() {
 			t.Config.addSource(source)
 			t.Config.saveConfig()
 			t.setSource()
-			t.addDropdownOption()
+			if err := t.addDropdownOption(); err != nil {
+				log.Printf("addDropdownOption fail:%s", err)
+			}
 			t.Pages.HidePage("modal")
 		}).
 		AddButton("Quit", func() {

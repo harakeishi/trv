@@ -25,7 +25,9 @@ func (d *DB) loadData(repo, path string) error {
 		return fmt.Errorf("loadData fail:%w", err)
 	}
 	raw, _ := ioutil.ReadFile(fmt.Sprintf("%s/.trv/%s-%s.json", home, repo, strings.Replace(path, "/", "-", -1)))
-	json.Unmarshal(raw, &d.Tables)
+	if err := json.Unmarshal(raw, &d.Tables); err != nil {
+		return fmt.Errorf("loadData fail:%w", err)
+	}
 	return nil
 }
 
