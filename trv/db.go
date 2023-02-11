@@ -19,13 +19,14 @@ type DB struct {
 }
 
 // If there is DB data locally, load it and return it.
-func (d *DB) loadData(repo, path string) {
+func (d *DB) loadData(repo, path string) error {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Printf("loadData fail:%s", err)
+		return fmt.Errorf("loadData fail:%w", err)
 	}
 	raw, _ := ioutil.ReadFile(fmt.Sprintf("%s/.trv/%s-%s.json", home, repo, strings.Replace(path, "/", "-", -1)))
 	json.Unmarshal(raw, &d.Tables)
+	return nil
 }
 
 // Store DB data locally.
