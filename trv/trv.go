@@ -2,6 +2,7 @@ package trv
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
@@ -189,8 +190,11 @@ func (t *Trv) setForm() {
 		}).
 		AddButton("Save", func() {
 			t.Config.addSource(source)
+			t.Config.saveConfig()
 			t.setSource()
-			t.addDropdownOption()
+			if err := t.addDropdownOption(); err != nil {
+				log.Printf("addDropdownOption fail:%s", err)
+			}
 			t.Pages.HidePage("modal")
 		}).
 		AddButton("Quit", func() {
@@ -199,7 +203,7 @@ func (t *Trv) setForm() {
 	t.Form.SetBorder(true).SetTitle("add data source")
 }
 
-// set add source modal
+// set source modal
 func (t *Trv) setModal() {
 	t.Modal = tview.NewGrid().
 		SetColumns(0, 4, 0).
@@ -207,6 +211,7 @@ func (t *Trv) setModal() {
 		AddItem(t.Form, 0, 0, 4, 4, 0, 0, true)
 }
 
+// set error modal
 func (t *Trv) setErrorModal() {
 	t.ErrorWindow = tview.NewModal().
 		SetText("Do you want to quit the application?").
@@ -272,12 +277,14 @@ func (t *Trv) filterList() {
 	}
 }
 
+// drawing
 func (t Trv) Draw() {
 	if err := t.App.SetRoot(t.Pages, true).Run(); err != nil {
 		panic(err)
 	}
 }
 
+// set Configuration form
 func (t Trv) CreateConfig() {
 	runewidth.DefaultCondition = &runewidth.Condition{EastAsianWidth: false}
 	t.App = tview.NewApplication()
@@ -306,6 +313,7 @@ func (t Trv) CreateConfig() {
 		}).
 		AddButton("Save", func() {
 			t.Config.addSource(source)
+			t.Config.saveConfig()
 			t.setSource()
 			t.App.Stop()
 		}).

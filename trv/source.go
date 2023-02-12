@@ -19,7 +19,9 @@ If not, retrieve it from a remote location.
 func (s Source) setDbData() (DB, error) {
 	var db DB
 
-	db.loadData(s.Repo, s.Path)
+	if err := db.loadData(s.Repo, s.Path); err != nil {
+		return DB{}, fmt.Errorf("DB loadData fail:%w", err)
+	}
 
 	client, ctx, err := s.NewClient()
 	if err != nil {
