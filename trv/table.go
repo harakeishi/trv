@@ -20,14 +20,13 @@ type Table struct {
 	Description string   `json:"comment"`
 	Columns     []Column `json:"columns"`
 }
+type Repositories interface {
+	GetContents(ctx context.Context, owner string, repo string, path string, opt *github.RepositoryContentGetOptions) (fileContent *github.RepositoryContent, directoryContent []*github.RepositoryContent, resp *github.Response, err error)
+}
 
 // return table_name.column_name
 func (t Table) getFullName(i int) string {
 	return t.Name + "." + t.Columns[i].Name
-}
-
-type Repositories interface {
-	GetContents(ctx context.Context, owner string, repo string, path string, opt *github.RepositoryContentGetOptions) (fileContent *github.RepositoryContent, directoryContent []*github.RepositoryContent, resp *github.Response, err error)
 }
 
 // Get the schema information output in markdown from GitHub.

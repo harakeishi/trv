@@ -91,3 +91,38 @@ func TestTable_fetchTableInfoInMarkdownFromGitHub(t *testing.T) {
 		})
 	}
 }
+
+func TestTable_getFullName(t *testing.T) {
+	type args struct {
+		i int
+	}
+	tests := []struct {
+		name string
+		tr   Table
+		args args
+		want string
+	}{
+		{
+			name: "",
+			tr: Table{
+				Name: "test",
+				Columns: []Column{
+					{
+						Name: "columnName",
+					},
+				},
+			},
+			args: args{
+				i: 0,
+			},
+			want: "test.columnName",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.tr.getFullName(tt.args.i); got != tt.want {
+				t.Errorf("Table.getFullName() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
