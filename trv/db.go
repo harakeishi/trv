@@ -86,7 +86,7 @@ func (d *DB) fetchDBInfo(client *github.Client, ctx context.Context, source Sour
 					continue
 				}
 				var table Table
-				schema, err := table.fetchTableInfoInMarkdownFromGitHub(client, ctx, source.Owner, source.Repo, path)
+				schema, err := table.fetchTableInfoInMarkdownFromGitHub(client.Repositories, ctx, source.Owner, source.Repo, path)
 				if err != nil {
 					return fmt.Errorf("fech DB info fail:%w", err)
 				}
