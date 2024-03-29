@@ -29,7 +29,7 @@ func (d *DB) loadData(repo, path string) error {
 		return nil
 	}
 	if err := json.Unmarshal(raw, &d.Tables); err != nil {
-		return fmt.Errorf("loadData failaa:%w", err)
+		return fmt.Errorf("loadData fail:%w", err)
 	}
 	return nil
 }
