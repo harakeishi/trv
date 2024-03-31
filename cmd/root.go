@@ -21,22 +21,22 @@ var rootCmd = &cobra.Command{
 			curver.EchoVersion()
 			return nil
 		}
-		var trv trv.Trv
+		// var trv trv.Trv
 
-		exists, err := trv.Config.Exists()
-		if err != nil {
-			return err
-		}
-		if exists {
-			err = trv.Init()
-			if err != nil {
-				return err
-			}
-			trv.Draw()
-		} else {
-			trv.CreateConfig()
-		}
-
+		// exists, err := trv.Config.Exists()
+		// if err != nil {
+		// 	return err
+		// }
+		// if exists {
+		// 	err = trv.Init()
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	trv.Draw()
+		// } else {
+		// 	trv.CreateConfig()
+		// }
+		trv.Draw2()
 		return nil
 	},
 }
