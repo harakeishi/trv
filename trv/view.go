@@ -8,7 +8,11 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-var docStyle = lipgloss.NewStyle().Margin(1, 2)
+var (
+	docStyle     = lipgloss.NewStyle().Margin(1, 2)
+	helpStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
+	defaultStyle = lipgloss.NewStyle().BorderStyle(lipgloss.ThickBorder()).BorderForeground(lipgloss.Color("62"))
+)
 
 func Draw2() {
 	p := tea.NewProgram(newModel())
@@ -151,13 +155,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+var tabls, column lipgloss.Style
+
 func (m model) View() string {
 	if m.currentView == "list" {
 		return docStyle.Render(m.dbs.View())
 	} else if m.currentView == "table" {
-		tabls := lipgloss.NewStyle().Width(m.width).Height(m.height / 3 * 2).Render(m.tables.View())
-		column := lipgloss.NewStyle().Width(m.width).Height(m.height / 3 * 1).BorderStyle(lipgloss.NormalBorder()).BorderForeground(lipgloss.Color("62")).Render(m.currentColmun)
-		return lipgloss.JoinVertical(lipgloss.Center, tabls, column)
+		tabls = defaultStyle.Width(m.width / 3 * 2).Height(m.height - 1)
+		column = defaultStyle.Width(m.width / 3).Height(m.height - 1)
+		return lipgloss.JoinHorizontal(lipgloss.Top, tabls.Render(fmt.Sprintf("%4s", m.tables.View())), column.Render(fmt.Sprintf("%4s", m.currentColmun))) + helpStyle.Render("\ntab: focus next • n: new  • q: exit\n")
 	}
 	return ""
 }
