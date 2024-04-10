@@ -1,9 +1,6 @@
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
 
-
-version: 1
-
 before:
   hooks:
     # You may remove this if you don't use go modules.
@@ -33,7 +30,8 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
-
+release:
+  draft: true
 changelog:
   sort: asc
   filters:
