@@ -37,7 +37,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v5
         with:
           distribution: goreleaser
-          version: latest
+          version: 1.8.3
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
