@@ -38,7 +38,7 @@ jobs:
         with:
           distribution: goreleaser
           version: 1.8.3
-          args: release --clean
+          args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
           Version: ${{ steps.create-tag.outputs.Version }}
