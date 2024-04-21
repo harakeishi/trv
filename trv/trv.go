@@ -20,7 +20,8 @@ type Trv struct {
 	Searcher       *tview.InputField
 	Pages          *tview.Pages
 	InfoLayout     *tview.Grid
-	InfoText       *tview.TextView
+	DetailsText    *tview.TextView
+	Info           *tview.TextView
 	App            *tview.Application
 	Layout         *tview.Grid
 	Modal          tview.Primitive
@@ -54,7 +55,7 @@ func (t *Trv) Init() error {
 	}
 	t.setSearcher()
 	t.setTableViewer()
-	t.setInfoText()
+	t.setDetailsText()
 	t.setInfoLayout()
 	t.setLayout()
 	t.setForm()
@@ -153,7 +154,7 @@ func (t *Trv) setTableViewer() {
 	t.TableViewer.SetSelectedFunc(func(row int, column int) {
 		cell := t.TableViewer.GetCell(row, column)
 		info := cell.GetReference().(Info)
-		t.InfoText.SetText(fmt.Sprintf("table name: %s\ndetails: %s\n\ncolumn: %s\ntype: %s\ncomment: %s", info.Table.Name, info.Table.Description, info.Column.Name, info.Column.Type, info.Column.Comment))
+		t.DetailsText.SetText(fmt.Sprintf("table name: %s\ndetails: %s\n\ncolumn: %s\ntype: %s\ncomment: %s", info.Table.Name, info.Table.Description, info.Column.Name, info.Column.Type, info.Column.Comment))
 	})
 }
 
@@ -169,9 +170,9 @@ func (t *Trv) setSearcher() {
 }
 
 // set Source Info Text
-func (t *Trv) setInfoText() {
-	t.InfoText = tview.NewTextView()
-	t.InfoText.SetText("")
+func (t *Trv) setDetailsText() {
+	t.DetailsText = tview.NewTextView()
+	t.DetailsText.SetText("")
 }
 
 // set new source form
@@ -252,7 +253,7 @@ func (t *Trv) setInfoLayout() {
 	t.InfoLayout = tview.NewGrid()
 	t.InfoLayout.SetTitle("details").SetBorder(true)
 	t.InfoLayout.SetSize(5, 5, 0, 0).
-		AddItem(t.InfoText, 0, 0, 5, 5, 0, 0, true)
+		AddItem(t.DetailsText, 0, 0, 5, 5, 0, 0, true)
 	t.InfoLayout.SetOffset(1, 1)
 }
 
