@@ -16,7 +16,7 @@ type Trv struct {
 	DB             DB
 	Tables         []Table
 	SourceSelecter *tview.DropDown
-	TableViewer    *tview.List
+	TableViewer    *tview.Table
 	Searcher       *tview.InputField
 	Pages          *tview.Pages
 	InfoLayout     *tview.Grid
@@ -27,6 +27,11 @@ type Trv struct {
 	ErrorModal     tview.Primitive
 	Form           *tview.Form
 	ErrorWindow    *tview.Modal
+}
+
+type Info struct {
+	Table  Table
+	Column Column
 }
 
 /*
@@ -141,9 +146,15 @@ func (t *Trv) addDropdownOption() error {
 
 // set table view
 func (t *Trv) setTableViewer() {
-	t.TableViewer = tview.NewList()
+	t.TableViewer = tview.NewTable().SetBorders(false)
 	t.TableViewer.SetTitle("Result(Ctrl+r)")
 	t.TableViewer.SetBorder(true)
+	t.TableViewer.SetSelectable(true, false)
+	t.TableViewer.SetSelectedFunc(func(row int, column int) {
+		cell := t.TableViewer.GetCell(row, column)
+		info := cell.GetReference().(Info)
+		t.InfoText.SetText(fmt.Sprintf("table name: %s\ndetails: %s\n\ncolumn: %s\ntype: %s\ncomment: %s", info.Table.Name, info.Table.Description, info.Column.Name, info.Column.Type, info.Column.Comment))
+	})
 }
 
 // set search box
@@ -258,20 +269,20 @@ func (t *Trv) setLayout() {
 // Filter and display data
 func (t *Trv) filterList() {
 	target := t.Searcher.GetText()
+	row := 0
 	t.TableViewer.Clear()
 	for _, r := range t.Tables {
 		for i, c := range r.Columns {
 			if strings.Contains(strings.ToLower(r.getFullName(i)), strings.ToLower(target)) || target == "" {
-				t.TableViewer.AddItem(r.getFullName(i), c.Comment, 1, func() {})
-				t.TableViewer.SetSelectedFunc(func(i int, s1, s2 string, r rune) {
-					for _, v := range t.Tables {
-						for a, b := range v.Columns {
-							if v.getFullName(a) == s1 {
-								t.InfoText.SetText(fmt.Sprintf("table name: %s\ndetails: %s\n\ncolumn: %s\ntype: %s\ncomment: %s", v.Name, v.Description, b.Name, b.Type, b.Comment))
-							}
-						}
-					}
-				})
+				t.TableViewer.SetCell(row, 0, tview.NewTableCell(r.getFullName(i)).
+					SetTextColor(tcell.ColorWhite).
+					SetAlign(tview.AlignLeft))
+				t.TableViewer.SetCell(row, 1, tview.NewTableCell(c.Comment).
+					SetTextColor(tcell.ColorBeige).
+					SetAlign(tview.AlignLeft))
+				cell := t.TableViewer.GetCell(row, 0)
+				cell.SetReference(Info{Table: r, Column: c})
+				row++
 			}
 		}
 	}
