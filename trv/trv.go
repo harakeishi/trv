@@ -277,7 +277,7 @@ func (t *Trv) filterList() {
 				t.TableViewer.SetCell(row, 0, tview.NewTableCell(r.getFullName(i)).
 					SetTextColor(tcell.ColorWhite).
 					SetAlign(tview.AlignLeft))
-				t.TableViewer.SetCell(row, 1, tview.NewTableCell(c.Name).
+				t.TableViewer.SetCell(row, 1, tview.NewTableCell(c.Comment).
 					SetTextColor(tcell.ColorBeige).
 					SetAlign(tview.AlignLeft))
 				cell := t.TableViewer.GetCell(row, 0)
