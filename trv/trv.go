@@ -19,7 +19,9 @@ type Trv struct {
 	TableViewer    *tview.Table
 	Searcher       *tview.InputField
 	Pages          *tview.Pages
-	InfoLayout     *tview.Grid
+	DetailsLayout  *tview.Grid
+	DetailsText    *tview.TextView
+	Info           *tview.Grid
 	InfoText       *tview.TextView
 	App            *tview.Application
 	Layout         *tview.Grid
@@ -32,6 +34,10 @@ type Trv struct {
 type Info struct {
 	Table  Table
 	Column Column
+}
+
+func (t *Trv) SetInfoText(s string) {
+	t.InfoText.SetText(s)
 }
 
 /*
@@ -54,8 +60,9 @@ func (t *Trv) Init() error {
 	}
 	t.setSearcher()
 	t.setTableViewer()
-	t.setInfoText()
-	t.setInfoLayout()
+	t.setDetailsText()
+	t.setInfo()
+	t.setdetailsLayout()
 	t.setLayout()
 	t.setForm()
 	t.setModal()
@@ -96,7 +103,7 @@ func (t *Trv) setSource() {
 func (t *Trv) setSourceSelecter() error {
 	var err error
 	t.SourceSelecter = tview.NewDropDown()
-	t.SourceSelecter.SetTitle("data source(Ctrl+d)")
+	t.SourceSelecter.SetTitle("data source")
 	t.SourceSelecter.SetLabel("data source: ").
 		SetOptions(t.Source, func(text string, index int) {
 			if index > len(t.Source)-1 {
@@ -147,20 +154,24 @@ func (t *Trv) addDropdownOption() error {
 // set table view
 func (t *Trv) setTableViewer() {
 	t.TableViewer = tview.NewTable().SetBorders(false)
-	t.TableViewer.SetTitle("Result(Ctrl+r)")
+	t.TableViewer.SetTitle("Result")
 	t.TableViewer.SetBorder(true)
 	t.TableViewer.SetSelectable(true, false)
 	t.TableViewer.SetSelectedFunc(func(row int, column int) {
-		cell := t.TableViewer.GetCell(row, column)
+		cell := t.TableViewer.GetCell(row, 0)
+		if cell.Reference == nil {
+			t.SetInfoText(fmt.Sprint("No Reference:", row, ":", column))
+			return
+		}
 		info := cell.GetReference().(Info)
-		t.InfoText.SetText(fmt.Sprintf("table name: %s\ndetails: %s\n\ncolumn: %s\ntype: %s\ncomment: %s", info.Table.Name, info.Table.Description, info.Column.Name, info.Column.Type, info.Column.Comment))
+		t.DetailsText.SetText(fmt.Sprintf("table name: %s\ndetails: %s\n\ncolumn: %s\ntype: %s\ncomment: %s", info.Table.Name, info.Table.Description, info.Column.Name, info.Column.Type, info.Column.Comment))
 	})
 }
 
 // set search box
 func (t *Trv) setSearcher() {
 	t.Searcher = tview.NewInputField()
-	t.Searcher.SetTitle("search(Ctrl+s)")
+	t.Searcher.SetTitle("search")
 	t.Searcher.SetLabel("search:")
 	t.Searcher.SetBorder(true)
 	t.Searcher.SetChangedFunc(func(text string) {
@@ -169,9 +180,21 @@ func (t *Trv) setSearcher() {
 }
 
 // set Source Info Text
-func (t *Trv) setInfoText() {
-	t.InfoText = tview.NewTextView()
-	t.InfoText.SetText("")
+func (t *Trv) setDetailsText() {
+	t.DetailsText = tview.NewTextView()
+	t.DetailsText.SetText("")
+}
+
+// set Source Info Text
+func (t *Trv) setInfo() {
+	help := tview.NewTextView()
+	help.SetText("focus: data source(Ctrl+d) search(Ctrl+s) Result(Ctrl+r)").SetTextColor(tcell.ColorSeashell)
+	t.InfoText = tview.NewTextView().SetText("hello world!").SetTextAlign(tview.AlignRight).SetTextColor(tcell.ColorSeashell)
+	t.Info = tview.NewGrid()
+	t.Info.SetSize(1, 5, 0, 0).
+		AddItem(help, 0, 0, 1, 3, 0, 0, true).
+		AddItem(t.InfoText, 0, 3, 1, 2, 0, 0, true)
+	t.Info.SetOffset(1, 1)
 }
 
 // set new source form
@@ -248,22 +271,23 @@ func (t *Trv) setPages() {
 }
 
 // Set the layout of the area displaying information about the column
-func (t *Trv) setInfoLayout() {
-	t.InfoLayout = tview.NewGrid()
-	t.InfoLayout.SetTitle("details").SetBorder(true)
-	t.InfoLayout.SetSize(5, 5, 0, 0).
-		AddItem(t.InfoText, 0, 0, 5, 5, 0, 0, true)
-	t.InfoLayout.SetOffset(1, 1)
+func (t *Trv) setdetailsLayout() {
+	t.DetailsLayout = tview.NewGrid()
+	t.DetailsLayout.SetTitle("details").SetBorder(true)
+	t.DetailsLayout.SetSize(5, 5, 0, 0).
+		AddItem(t.DetailsText, 0, 0, 5, 5, 0, 0, true)
+	t.DetailsLayout.SetOffset(1, 1)
 }
 
 // set layout
 func (t *Trv) setLayout() {
 	t.Layout = tview.NewGrid()
 	t.Layout.SetSize(10, 10, 0, 0).
-		AddItem(t.SourceSelecter, 0, 0, 2, 3, 0, 0, true).
-		AddItem(t.Searcher, 0, 3, 2, 7, 0, 0, true).
-		AddItem(t.TableViewer, 2, 0, 8, 5, 0, 0, true).
-		AddItem(t.InfoLayout, 2, 5, 8, 5, 0, 0, true)
+		AddItem(t.SourceSelecter, 0, 0, 2, 3, 1, 3, true).
+		AddItem(t.Searcher, 0, 3, 2, 7, 1, 7, true).
+		AddItem(t.TableViewer, 2, 0, 7, 5, 0, 0, true).
+		AddItem(t.DetailsLayout, 2, 5, 7, 5, 0, 0, true).
+		AddItem(t.Info, 9, 0, 1, 10, 0, 0, true)
 }
 
 // Filter and display data
