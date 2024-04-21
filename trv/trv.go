@@ -286,11 +286,6 @@ func (t *Trv) filterList() {
 			}
 		}
 	}
-	if t.TableViewer.GetRowCount() == 0 {
-		t.TableViewer.SetCell(row, 0, tview.NewTableCell("No result").
-			SetTextColor(tcell.ColorWhite).
-			SetAlign(tview.AlignLeft))
-	}
 }
 
 // drawing
