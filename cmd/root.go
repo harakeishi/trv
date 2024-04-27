@@ -35,6 +35,11 @@ var rootCmd = &cobra.Command{
 			trv.Draw()
 		} else {
 			trv.CreateConfig()
+			err = trv.Init()
+			if err != nil {
+				return err
+			}
+			trv.Draw()
 		}
 
 		return nil
